@@ -9,6 +9,9 @@ const { exec } = require('child_process');
 const { executablePath } = require('puppeteer');
 const os = require("os"); //used to change MAC address
 require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
+const { timeout } = require('puppeteer');
 
 const port = process.env.APP_PORT;
 const app = express();
@@ -38,19 +41,17 @@ app.post("/dash", (req, res)=>{
 
 
 
-
-
     //FUNCTION THAT DOES THE JOB
     const browseWebsite = async()=>{
         try{
             console.log(`Task is starting..`);
             
-
             //Create a random screensize
             const randomWidth = Math.floor(Math.random() * (2560 - 1366 + 1)) + 1366; // 1366-2560
             const randomHeight = Math.floor(Math.random() * (1440 - 768 + 1)) + 768; // 768-1440
 
             //set browser
+            const certPath = path.resolve(__dirname, 'brightdata.pem'); // ssl from brightdata
             const browser = await puppeteer.launch({
                 headless: false,
                 executablePath: executablePath(),
@@ -61,8 +62,9 @@ app.post("/dash", (req, res)=>{
                     '--disable-blink-features=AutomationControlled',
                     '--disable-web-security',
                     `--window-size=${randomWidth},${randomHeight}`,
-                    `--proxy-server=https://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`,
-                    "--ignore-certificate-errors" // Ignore SSL certificate issues
+                    `--proxy-server=http://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`,
+                    "--ignore-certificate-errors", // Ignore SSL certificate issues
+                    `--ssl-client-certificate=${certPath}`, // Load the SSL certificate
                 ],
                 ignoreHTTPSErrors: true // Ignore SSL errors
                 //timeout: process.env.LOAD_TIMEOUT // Increase timeout
@@ -136,7 +138,10 @@ app.post("/dash", (req, res)=>{
             console.log("Navigating to website...");
 
 
-            await page.goto(url, { waitUntil: 'networkidle2'});
+        
+
+            //await page.goto(url, { waitUntil: 'networkidle2'});
+            await page.goto(url, { waitUntil: 'load', timeout:0}); //timeout disabled
 
 
             // Simulate human-like interactions
@@ -179,13 +184,6 @@ app.post("/dash", (req, res)=>{
                 await page.waitForSelector('#braintan'); // Adjust selector
                 await page.click('#braintan');
                 console.log('Clicked a random ads".');
-                /*if (links.length > 0) {
-                    const randomElement = links[Math.floor(Math.random() * links.length)];
-                    await randomElement.click();
-                    console.log('Clicked a random ads".');
-                    //await new Promise(resolve => setTimeout(resolve, process.env.TIME_FOR_RANDOM_CLICK));
-                }
-                */
             }
             
 
