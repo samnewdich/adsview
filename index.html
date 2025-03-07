@@ -7,8 +7,9 @@
 </head>
 <style>
     input{
-        width: 80%;
+        width: 90%;
         height: 40px;
+        border-radius: 10px;
     }
 
     button{
@@ -18,12 +19,41 @@
     }
 </style>
 <body>
-    <form action="/dash" method="post">
-        <label>URL</label><br />
-        <input type="text" name="url" /><br />
-        <label>App Id</label><br />
-        <input type="text" name="appid" /><br />
-        <button type="submit">Start</button>
-    </form>
+    <div style="width: 100%;">
+        <div style="margin-top: 50px; width:80%; padding: 20px; margin-left: 10%; box-shadow: 2px 3px 6px 4px rgba(0, 0, 0, 0.5);">
+        <h1 style="text-align: center;">Adsviewer Software</h2>
+        <form action="/dash" method="post">
+            <table style="width: 100%;">
+                <tr style="width: 100%;">
+                    <td style="width: 20%;"> <label>URL</label> </td>
+                    <td style="width: 80%;"><input type="text" name="url" placeholder="https://mywebsite.com/page" /></td>
+                </tr>
+
+                <tr style="width: 100%;">
+                    <td style="width: 20%;"> <label>Product Id</label> </td>
+                    <td style="width: 80%;"> <input type="text" name="appid" placeholder="Product Id" /> </td>
+                </tr>
+
+                <tr style="width: 100%;">
+                    <td style="width: 20%;"> </td>
+                    <td style="width: 80%;">
+                        <br />
+                        <button type="submit" style="width: 90%; border: none; border-radius: 10px; height:40px; font-size: 22px;">Start</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div style="margin-top: 10px; text-align: center;">
+            <p>100% Real Traffic & Organic</p>
+            <p>Perfect for all Ads publishing</p>
+            <p>
+                <a style="color: #00f; text-decoration: underline;">Buy Product ID on Newdich Appstore</a>
+            </p>
+        </div>
+        <div style="margin-top: 60px; text-align: center;">
+            &copy; Newdich Technology
+        </div>
+        </div>
+    </div>
 </body>
 </html>

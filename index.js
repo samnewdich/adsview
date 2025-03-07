@@ -46,12 +46,10 @@ async function rebootRouter() {
     await pagereboot.click('#rebootBtn');
 
     // Wait for page to load and find the reboot button
-    await pagereboot.waitForSelector('#rebootBtn'); // Adjust selector
-    await pagereboot.click('#rebootBtn');
+    //await pagereboot.waitForSelector('.reboot', { visible: true }); // Adjust selector
+    //await pagereboot.click('#wifiRebootPopup'); 
 
-    console.log('Reboot command sent!');
-
-    await new Promise(resolve => setTimeout(resolve, 20000));
+    await new Promise(resolve => setTimeout(resolve, 60000));
     await browser.close();
 }
 
@@ -68,6 +66,8 @@ app.post("/dash", (req, res)=>{
             error:"URL and App ID must be provided"
         });
     }
+
+    const wifiName ="Wi-Fi";
     
     
     //const url ="https://newdich.tech/institute/all/";
@@ -89,10 +89,11 @@ app.post("/dash", (req, res)=>{
             }
 
             //Change MAC on Windows
+        
             function changeMacWindows() {
                 console.log("Changing MAC Address on Windows...");
                 
-                exec("netsh interface show interface", (err, stdout) => {
+                exec(`netsh interface show interface name="${wifiName}" admin=enable`, (err, stdout) => {
                     if (err) return console.error("Error getting interfaces:", err);
                     
                     const match = stdout.match(/Wireless\s+(\S+)/);
@@ -115,13 +116,14 @@ app.post("/dash", (req, res)=>{
             }
 
             //Change MAC on Linux (Requires macchanger)
+            /*
             function changeMacLinux() {
                 console.log("Changing MAC Address on Linux...");
                 
                 exec("nmcli dev status", (err, stdout) => {
                     if (err) return console.error("Error getting interfaces:", err);
                     
-                    const match = stdout.match(/wifi\s+(\S+)/);
+                    const match = stdout.match('/wifi\s+(\S+)/');
                     if (!match) return console.error("WiFi adapter not found!");
 
                     const adapter = match[1];
@@ -131,9 +133,18 @@ app.post("/dash", (req, res)=>{
                         if (err) return console.error("Error changing MAC:", err);
                         
                         console.log(`✅ MAC changed to: ${newMac}`);
-                        reconnectWiFi();
+                        //reconnectWiFi();
                     });
                 });
+            }
+            */
+
+            //Generate Random MAC Address
+            function generateRandomMac() {
+                return "00:" + Array(5)
+                    .fill(0)
+                    .map(() => Math.floor(Math.random() * 256).toString(16).padStart(2, "0"))
+                    .join(":");
             }
 
 
@@ -141,7 +152,7 @@ app.post("/dash", (req, res)=>{
 
 
 
-            const wifiName ="Wi-Fi";
+
             const disconnectWiFi = async ()=>{
                 exec(`netsh interface set interface name="${wifiName}" admin=disable`, (error, stdout, stderr) => {
                     if (error) {
@@ -151,7 +162,8 @@ app.post("/dash", (req, res)=>{
                     console.log("Wi-Fi disconnected");
                     
                     // Reconnect after 3 seconds
-                    setTimeout(reconnectWiFi, 3000);
+                    //setTimeout(reconnectWiFi, 3000);
+                    setTimeout(changeMacAndReconnect, 3000);
                 });
             }
 
@@ -201,17 +213,16 @@ app.post("/dash", (req, res)=>{
 
 
             //start the proccessing here
-            changeMacAndReconnect()
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            //changeMacAndReconnect()
+            //await new Promise(resolve => setTimeout(resolve, 5000));
 
             //disconnectWiFi();
             //await new Promise(resolve => setTimeout(resolve, 10000));
 
-            //connectWindscribe();
-            //await new Promise(resolve => setTimeout(resolve, 15000));
-
-            //open puppeteer to open browser
+            connectWindscribe();
+            await new Promise(resolve => setTimeout(resolve, 25000));
             console.log(`Windscribe connected, App opening..`);
+            
 
             //Create a random screensize
             const randomWidth = Math.floor(Math.random() * (2560 - 1366 + 1)) + 1366; // 1366-2560
@@ -261,9 +272,16 @@ app.post("/dash", (req, res)=>{
                 };
             }, randomWidth, randomHeight, userAgent);
 
+
+            function getRandomReferrer(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
+            const theReferrers = ["https://www.google.com/", "https://facebook.com/", "https://www.gmail.com/", "https://t.me/", "https://www.x.com/", "https://www.tiktok.com/", "https://www.instagram.com/", "https://m.facebook.com/", "https://nairaland.com/", "https://www.medium.com/", "https://www.quora.com/", "https://www.pinterest.com/"];
+            const randomReferrer = getRandomReferrer(theReferrers);
+
             // Set extra HTTP headers
             await page.setExtraHTTPHeaders({
-                'Referer': 'https://www.google.com/',
+                'Referer': randomReferrer,
                 'Accept-Language': 'en-US,en;q=0.9'
             });
 
@@ -280,7 +298,7 @@ app.post("/dash", (req, res)=>{
 
 
             //let puppeteer detects popup or prompt and allow it
-            page.on('dialog', async dialog => {
+            /*page.on('dialog', async dialog => {
                 console.log(`Dialog message: ${dialog.message()}`);
                 if (dialog.message().toLowerCase().includes("allow")) {
                     await dialog.accept();
@@ -290,6 +308,7 @@ app.post("/dash", (req, res)=>{
                     console.log("Popup dismissed!");
                 }
             });
+            */
 
             
             await page.goto(url, { waitUntil: 'networkidle2' });
@@ -329,8 +348,9 @@ app.post("/dash", (req, res)=>{
             }
 
 
-            /*async function randomClick() {
-                const links = await page.$$('a');
+            async function randomClick() {
+                //const links = await page.$$('a');
+                const links = await page.waitForSelector('.braintan'); // Adjust selector
                 if (links.length > 0) {
                     const randomLink = links[Math.floor(Math.random() * links.length)];
                     await randomLink.click();
@@ -340,7 +360,7 @@ app.post("/dash", (req, res)=>{
             }
             
 
-            async function simulateTyping() {
+            /*async function simulateTyping() {
                 const searchInput = await page.$('input[type="search"]');
                 if (searchInput) {
                     const randomText = ["study abroad", "work abroad", "Travelling", "Technology"];
@@ -363,11 +383,18 @@ app.post("/dash", (req, res)=>{
             //await simulateTyping();
 
             // Wait before closing
-            await new Promise(resolve => setTimeout(resolve, 20000));
+            //set random seconds to wait
+            function getRandomWaiter(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
+            const waitinTime = [15000, 20000, 18000, 25000, 19000, 30000, 22000, 35000, 28000, 10000, 40000, 33000, 24000, 17000, 31000, 44000];
+            const randomWaiter = getRandomWaiter(waitinTime);
+            await new Promise(resolve => setTimeout(resolve, randomWaiter));
             await browser.close();
 
             // Disconnect Windscribe and wait 5 seconds before reconnecting
-            //await disConnectWindscribe();
+            await disConnectWindscribe();
+            console.log("windscribe disconnected");
             await new Promise(resolve => setTimeout(resolve, 5000));
             browseWebsite(); // Repeat the process
         }
@@ -375,7 +402,6 @@ app.post("/dash", (req, res)=>{
             console.error("The error is :", error);
         }
     }
-
 
     browseWebsite();
 });
