@@ -39,8 +39,7 @@ app.post("/dash", (req, res)=>{
     });
     
 
-
-
+    
     //FUNCTION THAT DOES THE JOB
     const browseWebsite = async()=>{
         try{
@@ -70,9 +69,10 @@ app.post("/dash", (req, res)=>{
                 //timeout: process.env.LOAD_TIMEOUT // Increase timeout
             });
 
+
             const page = await browser.newPage();
 
-            // Authenticate Proxy
+            // Authenticate Proxy 
             try {
                 await page.authenticate({
                     username: process.env.PROXY_USERNAME,
@@ -138,7 +138,10 @@ app.post("/dash", (req, res)=>{
             console.log("Navigating to website...");
 
 
-        
+            // Set navigation timeout and CSP bypass
+            await page.setDefaultNavigationTimeout(0);  // disable timeout
+            await page.setDefaultTimeout(0);  // Also disables timeout for other actions
+            await page.setBypassCSP(true);  // Bypass Content Security Policy
 
             //await page.goto(url, { waitUntil: 'networkidle2'});
             await page.goto(url, { waitUntil: 'load', timeout:0}); //timeout disabled
@@ -222,9 +225,9 @@ app.post("/dash", (req, res)=>{
             await new Promise(resolve => setTimeout(resolve, randomWaiter));
 
             //NOW THAT IT HAS WAITED ENOUGH, CLICK THE ADS
-            await randomClick();
+            //await randomClick();
             //AFTER CLICKING ADS, ALSO WAIT SOME SECONDS
-            await new Promise(resolve => setTimeout(resolve, randomWaiter));
+            //await new Promise(resolve => setTimeout(resolve, randomWaiter));
 
             await browser.close();
             

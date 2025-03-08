@@ -3,56 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adsviewer</title>
+    <title>Adsviewer Software</title>
+    <link rel="stylesheet" href="namy.css"> <!-- Assuming NAMY CSS is included -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 400px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        h1 {
+            color: #fff;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            height: 45px;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            outline: none;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        button {
+            width: 100%;
+            background: linear-gradient(90deg, #ff512f, #dd2476);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            height: 45px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #dd2476, #ff512f);
+        }
+        .info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #fff;
+        }
+        .info a {
+            color: #ffda79;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .info a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-<style>
-    input{
-        width: 90%;
-        height: 40px;
-        border-radius: 10px;
-    }
-
-    button{
-        background-color: #00f;
-        color: white;
-        cursor: pointer;
-    }
-</style>
 <body>
-    <div style="width: 100%;">
-        <div style="margin-top: 50px; width:80%; padding: 20px; margin-left: 10%; box-shadow: 2px 3px 6px 4px rgba(0, 0, 0, 0.5);">
-        <h1 style="text-align: center;">Adsviewer Software</h2>
+    <div class="container">
+        <h1>Ads Booster Software</h1>
+        <h3>Views + Clicks</h3>
         <form action="/dash" method="post">
-            <table style="width: 100%;">
-                <tr style="width: 100%;">
-                    <td style="width: 20%;"> <label>URL</label> </td>
-                    <td style="width: 80%;"><input type="text" name="url" placeholder="https://mywebsite.com/page" /></td>
-                </tr>
-
-                <tr style="width: 100%;">
-                    <td style="width: 20%;"> <label>Product Id</label> </td>
-                    <td style="width: 80%;"> <input type="text" name="appid" placeholder="Product Id" /> </td>
-                </tr>
-
-                <tr style="width: 100%;">
-                    <td style="width: 20%;"> </td>
-                    <td style="width: 80%;">
-                        <br />
-                        <button type="submit" style="width: 90%; border: none; border-radius: 10px; height:40px; font-size: 22px;">Start</button>
-                    </td>
-                </tr>
-            </table>
+            <label for="url">URL</label>
+            <input type="text" id="url" name="url" placeholder="https://mywebsite.com/page" required>
+            
+            <label for="appid">Product ID</label>
+            <input type="text" id="appid" name="appid" placeholder="Product ID" required>
+            
+            <button type="submit">Start</button>
         </form>
-        <div style="margin-top: 10px; text-align: center;">
+        <div class="info">
             <p>100% Real Traffic & Organic</p>
             <p>Perfect for all Ads publishing</p>
-            <p>
-                <a style="color: #00f; text-decoration: underline;">Buy Product ID on Newdich Appstore</a>
-            </p>
+            <p><a href="#">Buy Product ID on Newdich Appstore</a></p>
         </div>
-        <div style="margin-top: 60px; text-align: center;">
+        <div class="info" style="margin-top: 30px; font-size: 12px;">
             &copy; Newdich Technology
-        </div>
         </div>
     </div>
 </body>
